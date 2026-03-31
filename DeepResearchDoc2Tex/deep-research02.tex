@@ -1,0 +1,516 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\usepackage[numbers]{natbib}
+\begin{document}
+
+\section{Understanding Vision-Language Models and Geometric Annotations
+in X-ray
+Imaging}\label{understanding-vision-language-models-and-geometric-annotations-in-x-ray-imaging}
+
+\subsection{Formalized Questions}\label{formalized-questions}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Q1. Advances in Vision/Lang Models for X-ray Understanding:}
+  What are the latest developments in large vision or vision-language
+  models for interpreting X-ray images? (Including examples like
+  \textbf{MedGemma} and similar models, their capabilities and
+  applications in radiology.)
+\item
+  \textbf{Q2. Classical Annotation \& Measurements:} How are medical
+  images (especially X-rays) traditionally annotated and measured
+  geometrically? What ``geometric language'' or methods do clinicians
+  use to mark images (e.g. measuring sizes, angles), and are these
+  typically done manually? Are there automated methods for obtaining
+  such measurements?
+\item
+  \textbf{Q3. Modern Approaches for Geometric Annotation (CAD-like):} Is
+  there a modern approach that combines (1) and (2) -- for instance,
+  using advanced AI models to produce formal geometric annotations of
+  medical images (akin to a CAD model with shapes, splines, quantitative
+  measurements)? In other words, do any large or foundational models
+  exist that can perform detailed geometric \textbf{metrology} (shape
+  measurements) on 2D X-ray images (e.g. in orthopedic, chest, or dental
+  applications)?
+\end{itemize}
+
+With these clarified questions, we proceed to research the current state
+of the art and literature.
+
+\subsection{Advances in Vision and Vision-Language Models for X-ray
+Image
+Understanding}\label{advances-in-vision-and-vision-language-models-for-x-ray-image-understanding}
+
+Large \textbf{vision} and \textbf{vision-language models (VLMs)} are
+increasingly applied to medical imaging tasks, including X-ray
+interpretation. These models leverage massive image and text data to
+learn generalizable representations, enabling tasks like \textbf{image
+captioning, report generation, visual question answering (VQA)}, and
+classification in the medical
+domain\cite{key-1}\cite{key-2}.
+Notable recent advances include specialized models and open frameworks:
+
+\begin{itemize}
+\item
+  \textbf{MedGemma (Google, 2025):} A state-of-the-art open multimodal
+  model optimized for healthcare. MedGemma accepts medical images (e.g.
+  chest X-rays) and text, and generates text (like radiology reports or
+  answers to
+  questions)\cite{key-3}.
+  It comes in 4B and 27B parameter versions. Impressively,
+  \textbf{MedGemma 4B} can generate chest X-ray reports that were judged
+  sufficiently accurate for patient management in 81\% of cases by a
+  board-certified
+  radiologist\cite{key-4}.
+  It also achieved competitive performance on medical image
+  classification benchmarks, approaching task-specific
+  models\cite{key-5}.
+  MedGemma is part of Google's Health AI Developer Foundations (HAI-DEF)
+  initiative, which emphasizes lightweight, privacy-preserving
+  models\cite{key-6}\cite{key-7}.
+  An associated image encoder called \textbf{MedSigLIP} (400M
+  parameters) was trained on diverse medical images to power MedGemma's
+  vision
+  understanding\cite{key-8}\cite{key-9}.
+  MedGemma has demonstrated strong results in chest X-ray report
+  generation (RadGraph F1 of 30.3 after
+  fine-tuning)\cite{key-10}
+  and maintains general language capabilities, enabling it to handle
+  mixed medical/non-medical queries.
+\item
+  \textbf{MedDR (2024):} A large medical vision-language model
+  introduced by He et al. (2024) that uses \emph{diagnosis-guided
+  bootstrapping} for
+  training\cite{key-11}.
+  MedDR was developed to improve disease detection across multiple
+  imaging modalities. It represents a specialized VLM tailored for
+  radiology diagnostics.
+\item
+  \textbf{LLaVA-Med (2024):} An adaptation of the LLaVA (Large
+  Language-and-Vision Assistant) framework for
+  medicine\cite{key-11}.
+  LLaVA-Med is trained on medical image--text pairs, enabling a
+  conversational AI to answer questions or explain findings from images.
+  It leverages the success of multimodal conversational models (like
+  GPT-4 Vision) but with domain-specific tuning.
+\item
+  \textbf{BiomedCLIP (Microsoft, 2023):} A medical version of the CLIP
+  model, aligning radiology images with text reports or
+  labels\cite{key-12}.
+  BiomedCLIP provides a powerful image-text embedding; for example, it
+  can classify diseases by computing similarities between an X-ray image
+  embedding and text descriptions. Unlike generative VLMs, BiomedCLIP
+  outputs probability scores for predefined
+  categories\cite{key-13}\cite{key-14}.
+  It has shown strong performance on some tasks (even surpassing larger
+  VLMs on certain chest X-ray disease detection
+  benchmarks)\cite{key-15}.
+\item
+  \textbf{Other Vision-Language Advances:} Research has also explored
+  using general models like \textbf{GPT-4 with vision} for medical
+  images. In fact, studies reported that GPT-4's vision system could
+  achieve performance comparable to junior radiologists on certain image
+  interpretation
+  tasks\cite{key-16}.
+  However, robustness remains an issue -- e.g. VLMs including GPT-4 and
+  MedGemma can be sensitive to image artefacts (noise, motion blur,
+  etc.), leading to drops in
+  accuracy\cite{key-17}\cite{key-18}.
+  This underscores ongoing challenges in reliability and the need for
+  domain-specific fine-tuning for clinical
+  use\cite{key-19}.
+\end{itemize}
+
+In summary, there is a surge of \textbf{foundation models} for medical
+imaging. These include \textbf{multimodal generative models} (like
+MedGemma) that produce free-text reports or answers, and
+\textbf{image-text representation models} (like BiomedCLIP, MedSigLIP)
+for classification and
+retrieval\cite{key-9}.
+They are transforming X-ray understanding by allowing AI to
+\textbf{``see''} an X-ray and either describe it in natural language or
+match it to clinical findings. The latest models focus on chest X-rays
+(owing to large datasets like MIMIC-CXR), but efforts are broadening to
+other radiographs (e.g. musculoskeletal X-rays for fractures or
+alignment)\cite{key-20}\cite{key-21}.
+Overall, these large models provide a foundation for interpreting
+images, although their direct output is usually text or labels -- not
+yet rich geometric annotations.
+
+\subsection{Classical Annotation Methods and Geometric Measurements in
+Medical
+Imaging}\label{classical-annotation-methods-and-geometric-measurements-in-medical-imaging}
+
+Traditionally, medical image annotations are largely \textbf{manual} and
+rely on the expertise of clinicians (radiologists, orthopedists, etc.).
+In daily practice, doctors use \textbf{PACS} software or dedicated tools
+to mark images with regions of interest and perform measurements. Key
+aspects of classical annotation include:
+
+\begin{itemize}
+\item
+  \textbf{Annotation Types:} Common annotation techniques in medical
+  images are \textbf{bounding boxes}, \textbf{polygons}, and
+  \textbf{landmarks/keypoints} to outline structures or pinpoint
+  anatomical
+  landmarks\cite{key-22}.
+  For example, a radiologist may draw a polygon around a tumor on an
+  X-ray or mark key points on a bone's edges. These annotations serve as
+  ground truth for AI training and aid in visualizing findings.
+  Annotations often capture semantic labels (what structure or
+  abnormality it is) and location/shape information.
+\item
+  \textbf{Geometric Measurements:} Beyond simple labeling, clinicians
+  frequently take \textbf{quantitative measurements} from images. This
+  includes linear dimensions (e.g. tumor diameter, bone length), angles
+  (e.g. joint angles, spinal Cobb angle), areas, and ratios. Such
+  \textbf{measurement annotations} are typically recorded as numeric
+  values alongside the
+  image\cite{key-23}.
+  For instance, in a chest X-ray the cardiothoracic ratio (heart width
+  to chest width) might be measured with digital calipers, or in an
+  orthopedic X-ray the angle of a fracture or alignment of a joint is
+  measured. These measurements are vital for diagnosis and treatment
+  planning (e.g. monitoring tumor size or assessing scoliosis severity).
+\item
+  \textbf{Manual Process and Limitations:} The \textbf{gold standard}
+  for image measurements is manual estimation by experts. For example,
+  measuring the Cobb angle of a scoliotic spine on an X-ray involves a
+  doctor identifying end-vertebrae and drawing lines -- a time-consuming
+  process\cite{key-24}.
+  Manual annotation is accurate when done carefully, but it is
+  \textbf{labor-intensive and subject to inter-observer variability}.
+  Studies note that manual Cobb angle measurement is arduous and can
+  vary between observers, motivating automated
+  solutions\cite{key-24}\cite{key-25}.
+  Likewise, in dental cephalometric X-rays, orthodontists traditionally
+  locate dozens of landmarks by hand to derive distances/angles, which
+  is tedious and requires years of training.
+\item
+  \textbf{Tools and Languages:} There isn't a single formal ``geometric
+  language'' universally used in annotations; instead, clinicians use
+  imaging software features. \textbf{DICOM} (the standard for medical
+  images) allows storing annotations and measurements (often as separate
+  ``structured report'' objects or embedded presentation states). These
+  might encode lines or spline contours drawn by the user. Essentially,
+  the ``language'' of annotation is often geometric primitives: points,
+  lines, circles, splines drawn on the image with associated labels or
+  values. In classical practice, these annotations are not programmatic
+  descriptions but visual marks and text notes on the image.
+\end{itemize}
+
+\textbf{Are these annotations automated?} Historically, \textbf{most
+geometric annotation and measurement has been manual}, but recent years
+have seen increasing automation:
+
+\begin{itemize}
+\item
+  \textbf{Segmentation and Detection Algorithms:} Computer vision
+  techniques have long attempted to automate anatomical measurements.
+  Early methods (pre-deep-learning) included edge detection and
+  model-based algorithms to find boundaries, but with limited general
+  success. Today, \textbf{deep learning} is the primary driver of
+  automation. For example, convolutional neural networks can be trained
+  to \textbf{segment anatomical structures} (outline organs or lesions),
+  from which measurements can be derived automatically (e.g. computing
+  the area of a segmented lung nodule). Landmark-detection networks can
+  identify key anatomical points to then calculate distances or angles.
+\item
+  \textbf{Automated Orthopedic Measurements:} A wealth of research shows
+  that deep learning can replicate specific measurements. In spinal
+  X-rays, numerous studies have developed models to automatically
+  estimate the \textbf{Cobb angle} (the angle of spinal curvature) from
+  just the X-ray
+  image\cite{key-26}.
+  A recent systematic review of such deep learning algorithms for Cobb
+  angle found a pooled mean error around 2.99°, with segmentation-based
+  methods performing better than landmark-based ones (≈2.4° vs 3.3°
+  error)\cite{key-27}\cite{key-28}.
+  This suggests AI can approach the precision of experts for scoliosis
+  assessment. Other works achieved similar success: for instance, a deep
+  learning model by Xu \emph{et al.} directly predicts Cobb angles from
+  spine X-rays with performance comparable to
+  radiologists\cite{key-29}.
+\item
+  \textbf{Examples of Automated Measurements:}
+\item
+  \emph{Lower Limb Alignment:} Deep networks have been developed to
+  measure angles in knee/leg X-rays (e.g. hip-knee-ankle angle for leg
+  alignment) fully
+  automatically\cite{key-30}.
+  One study achieved rapid and accurate detection of limb alignment on
+  full-leg X-rays using deep
+  learning\cite{key-30}.
+\item
+  \emph{Shoulder Angles:} Models can measure angles like the critical
+  shoulder angle on radiographs, aiding orthopedic
+  assessments\cite{key-31}.
+\item
+  \emph{Foot Anatomy:} A commercial AI (Milvue, France) was reported to
+  \textbf{automate foot radiograph measurements}, such as podiatric
+  angles, with high
+  reliability\cite{key-32}.
+  This deep learning solution significantly reduced the time needed for
+  foot alignment evaluations compared to manual radiologist
+  measurements\cite{key-32}.
+\item
+  \emph{Dental Cephalometrics:} AI systems now automatically detect
+  cephalometric landmarks on lateral skull X-rays, allowing computation
+  of standard orthodontic measurements (overbite, jaw angle, etc.).
+  These have shown promising accuracy, nearing expert-level landmark
+  localization\cite{key-33}
+  (various studies in 2021--2023).
+\item
+  \emph{Chest X-ray Metrics:} Automation is also entering chest
+  radiography. A notable example is \textbf{cardiothoracic ratio (CTR)}
+  measurement. Qure.ai recently received FDA clearance for an AI tool
+  (\textbf{qXR-CTR}) that automatically calculates the cardiothoracic
+  ratio from frontal chest
+  X-rays\cite{key-34}.
+  This algorithm finds the borders of the heart and thorax on the X-ray
+  and outputs the ratio, aiding rapid cardiomegaly (enlarged heart)
+  screening\cite{key-35}\cite{key-36}.
+  The automation improves consistency and may enable early detection of
+  conditions like heart failure by quantifying heart size
+  objectively\cite{key-37}.
+\end{itemize}
+
+In summary, while doctors \textbf{traditionally annotate and measure
+X-rays manually}, drawing on their knowledge to interpret geometry,
+there is a clear trend toward \textbf{automation}. Modern AI models --
+often task-specific -- can now handle many measurements (lengths,
+angles, areas) in X-rays with accuracy often on par with human experts.
+These automated approaches usually involve a \textbf{deep learning model
+that outputs either a mask (segmentation) or keypoints}, which are then
+used to compute the desired metric. They greatly speed up the workflow
+and reduce observer variability, though in critical cases clinicians
+still verify the AI's suggestions. Notably, these automated measurement
+tools are not yet \emph{universal}; each is usually trained for a
+specific purpose (e.g. measuring one particular angle or detecting one
+type of lesion).
+
+\subsection{Toward CAD-like Geometric Modeling and Metrology with
+AI}\label{toward-cad-like-geometric-modeling-and-metrology-with-ai}
+
+The idea of a \textbf{formal geometric language or CAD-like model} for
+medical images is intriguing. In engineering, CAD models describe
+objects with precise geometric primitives (lines, arcs, splines) which
+allow exact measurements. Here we ask: is there a modern approach
+(perhaps leveraging foundation models) that can output such a structured
+geometric representation for a medical image (like an X-ray), rather
+than just labels or unstructured predictions?
+
+\textbf{Current State -- Segmentation to Shapes:} Most deep learning
+models for medical imaging output \emph{pixel-wise} results
+(segmentation masks) or point estimates, not a parametric geometry.
+However, researchers have started bridging this gap. One approach is to
+constrain or convert segmentation outputs into \textbf{smooth,
+parametric shapes}. For example, Williams \emph{et al.} (MICCAI 2021)
+proposed an interactive segmentation framework where the CNN's
+segmentation contour is represented as a \textbf{B-spline
+curve}\cite{key-38}.
+By using B-spline explicit active surfaces (a type of shape model),
+their system ensures the outlined structure is smooth and anatomically
+plausible, and it allows a human to adjust the spline in real-time if
+needed\cite{key-38}.
+This marriage of deep learning with \textbf{explicit geometry modeling}
+is akin to a CAD-like representation -- the contour of an organ can be
+expressed by control points and curves rather than a crude pixel mask.
+Such parametric representations make it easier to compute precise
+distances, radii, angles, etc., and to enforce prior knowledge about
+shape continuity.
+
+Another line of work integrates deep learning with \textbf{active shape
+models} or statistical shape models. These methods build a deformable
+model (often spline or mesh based) of a structure (say, a bone) and have
+the AI predict the deformation parameters. The result is a vector
+graphic outline of the target anatomy. This is still an active research
+area and not yet widespread in clinical AI tools, but it demonstrates
+the potential for CAD-like precision. By fitting models like splines or
+ellipses to detected structures, one can directly obtain \textbf{metric
+properties} (e.g. the major/minor axis lengths of an elliptical tumor
+outline).
+
+\textbf{Vision-Language Models with Structured Output:} Large VLMs like
+MedGemma currently produce free-form text (e.g. a paragraph report)
+rather than a formal geometric description. They excel at summarizing
+findings and even mentioning measurements that they infer from the
+image, but those measurements come as natural language (e.g. ``the tumor
+is approximately 2 cm in diameter'') rather than as an interactive
+model. As of now, there's \textbf{no known foundational model that
+outputs a full CAD model or a formal geometry script from an X-ray}. The
+focus has been on \textbf{semantic understanding} and language
+generation, not on creating a quantifiable model of anatomy.
+
+However, combining these advances is a logical next step. We can
+envision a system where a foundation model interprets the image,
+identifies the key structures, and then either: - calls a dedicated
+module to fit geometric shapes to those structures, or - directly
+generates a structured report containing coordinates or measurements.
+
+Some early attempts exist in the form of \textbf{multi-step AI
+pipelines}. For instance, an AI assistant could first use a segmentation
+model (like a fine-tuned \textbf{Segment Anything Model}) to get a mask
+of an organ or lesion, then compute geometric features from that mask,
+and finally have a language model incorporate those features into its
+report. This kind of pipeline isn't yet a one-click solution, but pieces
+of it are in place. Indeed, the \textbf{Segment Anything Model (SAM)}, a
+recent general model for segmentation, has been tested on medical images
+(often with additional tuning) to quickly obtain masks of structures.
+Those masks can yield volumes or areas which are the basis of metrology.
+Researchers are actively exploring such combinations to enable
+\textbf{quantitative analytics} in AI-driven diagnosis.
+
+\textbf{Metrology in AI-Based Diagnosis:} ``Metrology'' refers to
+quantitative measurement. In an AI diagnostic system, this could mean
+the AI doesn't just say \emph{``there is a fracture''} but also
+\emph{``the fracture is 3.5 cm in length with 10° angulation''}.
+Achieving this requires both detection and measurement. Some current AI
+products are moving in that direction on specific tasks (e.g., the
+earlier example of Qure.ai's chest X-ray tool automatically calculating
+a
+ratio\cite{key-36}
+-- here the output is a concrete number, not just a label). Similarly,
+AI for fracture assessment might output the displacement in mm or the
+fracture line length. These are early forms of integrating metrology
+into AI results. They tend to rely on straightforward geometry derived
+from segmentation or keypoints.
+
+\textbf{Large/Foundational Models and Geometry:} We should note that
+large pre-trained models can be fine-tuned or prompted to help with
+measurements if given the right interfaces. For example, a
+vision-language model could be prompted in a chain-of-thought manner to
+\textbf{count pixels} corresponding to a known scale, effectively doing
+a measurement calculation as part of its reasoning. But this is not
+robustly reliable yet. No large medical VLM to date natively understands
+a ``geometry language'' like a CAD program would. Instead, the precise
+geometry understanding is usually achieved by dedicated vision models
+(segmentation nets, etc.) as described.
+
+In the \textbf{research frontier}, there are efforts to create more
+\textbf{structured outputs}. One example is a foundation model called
+\textbf{FLAnS (Free-form Language-based Segmentation)} which allows a
+user to input text like ``segment the left lung and measure its area''
+-- the model then segments and provides an output
+mask\cite{key-39}.
+Extending this concept, a future system might output a parametric
+representation (for instance, return a polygon outline of the lung that
+could be imported into a CAD software). Another example is integrating
+\textbf{graph neural networks} or \textbf{geometric deep learning} to
+handle anatomical structures (treating joints or vertebrae as nodes in a
+graph, for instance) -- an approach that could inherently yield
+geometric relations and thus
+measurements\cite{key-40}\cite{key-41}.
+
+\textbf{Summary of Modern Prospects:} We are beginning to see
+convergence between \emph{vision-language understanding} and
+\emph{geometric quantification}. While no single \textbf{X-ray
+foundation model} currently outputs full CAD-like annotations,
+researchers are introducing geometry-aware AI methods. By combining
+segmentation networks, shape modeling (splines/meshes), and the
+interpretive power of VLMs, one can imagine a ``\textbf{next-generation
+CAD (Computer-Aided Diagnosis)}'' system in radiology that goes beyond
+highlighting an abnormality -- it could \emph{draw} it out with precise
+contours and numbers. For now, the most advanced systems remain
+task-specific (focused on one type of measurement or one anatomy).
+Foundation models like MedGemma provide the high-level understanding and
+language
+interface\cite{key-7},
+whereas classical geometric methods (augmented with deep learning)
+provide the numeric rigor. Merging these effectively is an open research
+area.
+
+\subsection{Conclusion}\label{conclusion}
+
+In conclusion, \textbf{large vision and vision-language models} are
+making significant strides in interpreting X-ray images. Models like
+MedGemma exemplify how far we've come in generating accurate radiology
+reports and answering clinical questions from
+images\cite{key-4}.
+At the same time, the routine work of \textbf{annotating and measuring
+medical images} has historically been manual, using simple geometric
+tools -- but AI is rapidly automating many of these measurements, from
+spinal curvature
+angles\cite{key-24}\cite{key-26}
+to heart size
+ratios\cite{key-34}.
+The fusion of these two threads -- semantic understanding and precise
+geometric quantification -- is on the horizon. Early research that
+incorporates \textbf{formal geometric representations} (like
+spline-based
+contours\cite{key-38})
+into deep learning shows promise for achieving CAD-like accuracy in
+measurements.
+
+\textbf{As of now, no single ``foundational'' AI system can intake an
+X-ray and output a full geometric analysis (e.g. a complete CAD model of
+a bone or tumor with all measurements)}. Instead, the capability is
+split among specialized components: vision-language models excel at
+description and reasoning, while dedicated vision models handle exact
+localization and measurement. Modern AI in medical imaging is moving
+toward uniting these capabilities. In practice, AI-based tools (some
+FDA-approved) are already performing quantitative tasks that augment
+diagnosis\cite{key-36}
+-- essentially early steps of metrological analysis. It's reasonable to
+expect that future foundational models or multi-model systems will
+further integrate this, enabling clinicians not only to detect
+abnormalities but also to obtain reliable \textbf{quantitative geometry}
+(sizes, shapes, and other metrics) from X-ray images at the click of a
+button.
+
+
+
+\bibliographystyle{unsrtnat}
+\bibliography{deep-research02}
+
+\end{document}

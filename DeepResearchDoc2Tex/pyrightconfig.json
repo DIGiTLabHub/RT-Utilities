@@ -1,0 +1,10 @@
+{
+  "typeCheckingMode": "off",
+  "reportAny": "none",
+  "reportExplicitAny": "none",
+  "reportDeprecated": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnusedCallResult": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownVariableType": "none"
+}
