@@ -1,0 +1,177 @@
+% ==========================================================
+% ceai.sty
+% Custom Style for Applied AI Lecture Notes / Book
+% Author: ZhiQiang Chen
+% Date: 2026-01-19
+% ==========================================================
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ceai}[2026/01/19 Applied AI Lecture Notes Style]
+
+% ----------------------------------------------------------
+% Page layout
+% ----------------------------------------------------------
+\RequirePackage[letterpaper,margin=1in]{geometry}
+
+% ----------------------------------------------------------
+% Core math & text packages
+% ----------------------------------------------------------
+\RequirePackage{amsmath,amsfonts,amssymb}
+\RequirePackage{setspace}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{bm}
+\RequirePackage{listings}
+
+% ----------------------------------------------------------
+% Graphics & figures
+% ----------------------------------------------------------
+\RequirePackage{graphicx}
+\RequirePackage{graphics}
+\graphicspath{{./figs/}}
+
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes,calc}
+
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+
+% ----------------------------------------------------------
+% Tables
+% ----------------------------------------------------------
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{tabulary}
+\RequirePackage{multirow}
+
+% ----------------------------------------------------------
+% Landscape pages
+% ----------------------------------------------------------
+\RequirePackage{lscape}
+
+% ----------------------------------------------------------
+% Code listings (MATLAB)
+% ----------------------------------------------------------
+%\RequirePackage[framed,numbered,autolinebreaks,useliterate]%{mcode}
+
+% ----------------------------------------------------------
+% Colors & boxes
+% ----------------------------------------------------------
+\RequirePackage{xcolor}
+\RequirePackage{tcolorbox}
+\tcbuselibrary{breakable}
+
+% ----------------------------------------------------------
+% Hyperlinks
+% ----------------------------------------------------------
+\RequirePackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Applied AI Lecture Notes},
+    pdfpagemode=FullScreen
+}
+
+% ----------------------------------------------------------
+% Mathematical shortcuts (legacy compatibility)
+% ----------------------------------------------------------
+\newcommand{\field}[1]{\mathbb{#1}}
+\newcommand{\Rset}{\field{R}}
+\newcommand{\Zset}{\field{Z}}
+\newcommand{\Qset}{\field{Q}}
+\newcommand{\Nset}{\field{N}}
+\newcommand{\fullunderline}{\noindent\makebox[\linewidth]{\rule{\linewidth}{0.1pt}}\\[-2em]}
+
+% use TikZ repeatedly in the course
+\RequirePackage{tikz}
+\usetikzlibrary{
+  arrows.meta,
+  positioning,
+  shapes.geometric,
+  fit,
+  backgrounds
+}
+
+
+
+
+% ----------------------------------------------------------
+% Color definitions
+% ----------------------------------------------------------
+\definecolor{ceaiLightBlue}{RGB}{220,235,245}
+\definecolor{ceaiAlertYellow}{RGB}{255,245,170}
+
+% ----------------------------------------------------------
+% Text box environments
+% ----------------------------------------------------------
+
+% 1. Definition Box
+%    Blue text, font size 13, no background
+\newtcolorbox{def-box}{
+  colback=white,
+  colframe=white,
+  boxrule=0pt,
+  left=0pt,
+  right=0pt,
+  top=4pt,
+  bottom=4pt,
+  fontupper=\color{blue}\fontsize{13}{15}\selectfont
+}
+
+% 2. Chapter Start Box
+%    Italic, font size 12, light blue background
+\newtcolorbox{ch-box}{
+  colback=ceaiLightBlue,
+  colframe=ceaiLightBlue,
+  boxrule=0pt,
+  arc=0pt,
+  left=10pt,
+  right=10pt,
+  top=8pt,
+  bottom=8pt,
+  fontupper=\itshape\fontsize{12}{14}\selectfont
+}
+
+% 3. Alert Box
+%    Yellow highlighted background
+\newtcolorbox{alert-box}{
+  colback=ceaiAlertYellow,
+  colframe=ceaiAlertYellow,
+  boxrule=0pt,
+  left=8pt,
+  right=8pt,
+  top=6pt,
+  bottom=6pt,
+  fontupper=\normalsize
+}
+
+% 4. Example Box
+%    Regular font, breakable across pages
+\newtcolorbox{ex-box}{
+  breakable,
+  colback=white,
+  colframe=black!30,
+  boxrule=0.5pt,
+  left=10pt,
+  right=10pt,
+  top=8pt,
+  bottom=8pt,
+  fontupper=\normalsize
+}
+
+% Fix copy/paste from PDF for code blocks: keep monospaced text without added letter-spacing
+% and map ligatures to plain ASCII in listings.
+\RequirePackage{listings}
+\RequirePackage{microtype}
+\DisableLigatures{encoding = *, family = tt*}
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  upquote=true
+}

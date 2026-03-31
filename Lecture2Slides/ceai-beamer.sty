@@ -1,0 +1,230 @@
+% ==========================================================
+% ceai-beamer.sty
+% Custom Beamer Style for Applied AI Courses
+% Author: ZhiQiang Chen
+% Extended with structured handout notes (ChatGPT)
+% Date: 2026-01-25
+% ==========================================================
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ceai-beamer}[2026/01/25 Applied AI Beamer Style]
+
+% ----------------------------------------------------------
+% Package options (must forward paper size to beamer class)
+% ----------------------------------------------------------
+\newif\ifceai@handoutnotes
+\ceai@handoutnotesfalse
+
+\DeclareOption{handoutnotes}{
+  \ceai@handoutnotestrue
+  \PassOptionsToClass{handout}{beamer}
+}
+\DeclareOption{letterpaper}{
+  \PassOptionsToClass{letterpaper}{beamer}
+}
+\DeclareOption{a4paper}{
+  \PassOptionsToClass{a4paper}{beamer}
+}
+
+% Default paper size if user doesn't specify
+\ExecuteOptions{a4paper}
+\ProcessOptions\relax
+
+% ----------------------------------------------------------
+% Core packages
+% ----------------------------------------------------------
+\RequirePackage{amsmath,amsfonts,amssymb}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\RequirePackage{tcolorbox}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{bm}
+\RequirePackage{pgfpages}
+\RequirePackage{etoolbox}
+
+% Default graphics path
+% Support compiling from project root or from a subdirectory (e.g., Slides/)
+\graphicspath{{../figs/}{./figs/}}
+% TikZ libraries for system / AI diagrams
+\usetikzlibrary{arrows.meta,positioning,shapes,calc}
+
+% ----------------------------------------------------------
+% Mathematical shortcuts (legacy compatibility)
+% ----------------------------------------------------------
+\newcommand{\field}[1]{\mathbb{#1}}
+\newcommand{\Rset}{\field{R}}
+\newcommand{\Zset}{\field{Z}}
+\newcommand{\Qset}{\field{Q}}
+\newcommand{\Nset}{\field{N}}
+
+% ----------------------------------------------------------
+% Beamer theme and layout (single point of control)
+% ----------------------------------------------------------
+\mode<presentation>{
+  \usetheme{Boadilla} % clean academic theme
+}
+
+\setbeamertemplate{navigation symbols}{}
+
+% Margins (engineering-friendly line length)
+\setbeamersize{text margin left=1cm}
+\setbeamersize{text margin right=1cm}
+
+% ----------------------------------------------------------
+% Section / subsection navigation behavior
+% ----------------------------------------------------------
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\mode<presentation>{
+  \AtBeginSection[]{
+    \begin{frame}[plain]
+      \centering
+      \vfill
+      {\Huge \insertsection}
+      \vfill
+    \end{frame}
+  }
+}
+
+% ----------------------------------------------------------
+% Teaching boxes (semantic, not decorative)
+% ----------------------------------------------------------
+\tcbset{
+  ceai/.style={
+    colback=blue!3,
+    colframe=blue!60!black,
+    fonttitle=\bfseries,
+    boxrule=0.6pt,
+    arc=2mm,
+    left=1mm,
+    right=1mm,
+    top=1mm,
+    bottom=1mm
+  }
+}
+
+\newtcolorbox{conceptbox}[1]{ceai,title={#1}}
+
+\newtcolorbox{examplebox}[1]{
+  ceai,
+  colback=green!3,
+  colframe=green!50!black,
+  title={#1}
+}
+
+\newtcolorbox{warningbox}[1]{
+  ceai,
+  colback=red!3,
+  colframe=red!60!black,
+  title={#1}
+}
+
+% ----------------------------------------------------------
+% Convenience frame macros (optional, encouraged)
+% ----------------------------------------------------------
+\newcommand{\ConceptFrame}[2]{
+  \begin{frame}{#1}
+    #2
+  \end{frame}
+}
+
+\newcommand{\BulletFrame}[2]{
+  \begin{frame}{#1}
+    \begin{itemize}
+      #2
+    \end{itemize}
+  \end{frame}
+}
+
+\newcommand{\bhref}[2]{%
+  \href{\detokenize{#1}}{\beamergotobutton{#2}}%
+}
+
+% ==========================================================
+% Handout layout: 3 slides + ruled notes column
+% ==========================================================
+\ifceai@handoutnotes
+
+% --- Header fields (user can override in main tex) ---
+\newcommand{\ceaihandoutcourse}{\insertshorttitle}
+\newcommand{\ceaihandoutlecture}{\insertshortauthor}
+\newcommand{\ceaihandoutdate}{\insertdate}
+
+% Helper: draw header line
+\newcommand{\ceai@handoutheader}{
+  \node[anchor=west,font=\small\bfseries]
+    at (.03\paperwidth,.975\paperheight)
+    {\ceaihandoutcourse\quad|\quad\ceaihandoutlecture\quad|\quad\ceaihandoutdate};
+  \draw[line width=0.4pt]
+    (.03\paperwidth,.965\paperheight) -- (.97\paperwidth,.965\paperheight);
+}
+
+% Activate layout in handout mode (DO NOT set paper size here)
+\mode<handout>{
+  \pgfpagesuselayout{3 on 1 with ceai notes}[border shrink=5mm]
+}
+
+% ---- Custom layout definition ----
+\pgfpagesdeclarelayout{3 on 1 with ceai notes}
+{
+  \edef\pgfpageoptionheight{\the\paperheight}
+  \edef\pgfpageoptionwidth{\the\paperwidth}
+}
+{
+  % 3 logical pages (slides) per physical page
+  \pgfpagesphysicalpageoptions{logical pages=3}
+
+  % --- Slides (left column)
+  \foreach \n/\y in {1/.78,2/.45,3/.12} {
+    \pgfpageslogicalpageoptions{\n}{
+      border shrink=4mm,
+      resized width=.55\pgfpageoptionwidth,
+      resized height=.28\pgfpageoptionheight,
+      center=\pgfpoint{.275\pgfpageoptionwidth}{\y\pgfpageoptionheight}
+    }
+  }
+
+  % --- Notes column (right side): title + ruled lines
+  \pgfpagesphysicalpagecontents{
+    \begin{tikzpicture}[remember picture,overlay]
+
+      % Header
+      \ceai@handoutheader
+
+      % Note boxes (3)
+      \foreach \i/\y in {1/.78,2/.45,3/.12} {
+
+        % Outer box
+        \draw[line width=0.6pt]
+          (.58\pgfpageoptionwidth,\y\pgfpageoptionheight)
+          rectangle
+          (.95\pgfpageoptionwidth,{(\y+0.28)*\pgfpageoptionheight});
+
+        % Label (left aligned)
+        \node[anchor=west,font=\small\bfseries]
+          at (.585\pgfpageoptionwidth,{(\y+0.255)*\pgfpageoptionheight})
+          {Notes (slide \i)};
+
+        % Ruled lines
+        \foreach \k in {1,...,10} {
+          \draw[gray!60]
+            (.59\pgfpageoptionwidth,{(\y+0.24-0.0215*\k)*\pgfpageoptionheight})
+            -- (.94\pgfpageoptionwidth,{(\y+0.24-0.0215*\k)*\pgfpageoptionheight});
+        }
+      }
+
+    \end{tikzpicture}
+  }
+}
+
+\fi
+% ==========================================================
+% End of ceai-beamer.sty
+% ==========================================================
